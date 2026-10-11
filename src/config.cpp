@@ -153,6 +153,13 @@ namespace config {
       return nvenc::split_encode_mode::auto_mode;
     }
 
+    foveation::mode_e foveation_from_view(const std::string_view &value) {
+      if (value != "disabled" && value != "fixed") {
+        BOOST_LOG(warning) << "config: unknown nvenc_foveation value: " << value;
+      }
+      return foveation::mode_from_view(value);
+    }
+
   }  // namespace nv
 
   namespace amd {
@@ -1700,6 +1707,12 @@ namespace config {
     generic_f(vars, "nvenc_split_encode", video.nv.split_encode_mode, nv::split_encode_mode_from_view);
     generic_f(vars, "nvenc_twopass", video.nv.two_pass, nv::twopass_from_view);
     bool_f(vars, "nvenc_h264_cavlc", video.nv.h264_cavlc);
+    generic_f(vars, "nvenc_foveation", video.nv.foveation.mode, nv::foveation_from_view);
+    double_between_f(vars, "nvenc_foveation_center_x", video.nv.foveation.center_x, {0.0, 1.0});
+    double_between_f(vars, "nvenc_foveation_center_y", video.nv.foveation.center_y, {0.0, 1.0});
+    double_between_f(vars, "nvenc_foveation_radius", video.nv.foveation.radius, {0.0, 2.0});
+    double_between_f(vars, "nvenc_foveation_falloff", video.nv.foveation.falloff, {0.0, 2.0});
+    int_between_f(vars, "nvenc_foveation_strength", video.nv.foveation.strength, {0, foveation::max_qp_delta});
     bool_f(vars, "nvenc_realtime_hags", video.nv_realtime_hags);
     bool_f(vars, "nvenc_opengl_vulkan_on_dxgi", video.nv_opengl_vulkan_on_dxgi);
     bool_f(vars, "nvenc_latency_over_power", video.nv_sunshine_high_power_mode);

@@ -6,6 +6,9 @@
 
 #include <string_view>
 
+// local includes
+#include "src/foveation.h"
+
 namespace nvenc {
 
   enum class nvenc_two_pass {
@@ -82,6 +85,9 @@ namespace nvenc {
 
     // Add filler data to encoded frames to stay at target bitrate, mainly for testing
     bool insert_filler_data = false;
+
+    // Spend more bits around a focus point and fewer in the periphery through a per-CTB QP delta map, HEVC only
+    foveation::config_t foveation;
   };
 
 }  // namespace nvenc

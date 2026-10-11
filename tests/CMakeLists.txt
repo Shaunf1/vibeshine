@@ -357,6 +357,19 @@ sunshine_add_test_target(
 )
 
 sunshine_add_test_target(
+    NAME test_fast_foveation
+    CATEGORY fast
+    TEST_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/tests_main.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/unit/test_foveation.cpp"
+    PRODUCT_SOURCES
+        "${SUNSHINE_TEST_REPOSITORY_ROOT}/src/foveation.cpp"
+    DEFINITIONS
+    LINK_LIBRARIES GTest::gtest
+    DEPENDENCIES
+)
+
+sunshine_add_test_target(
     NAME test_fast_framegen_policy
     CATEGORY fast
     TEST_SOURCES

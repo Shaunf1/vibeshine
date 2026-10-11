@@ -3712,6 +3712,192 @@ directly to the NVIDIA Video Codec SDK and is preferred during automatic probing
     </tr>
 </table>
 
+### nvenc_foveation
+
+<table>
+    <tr>
+        <td>Description</td>
+        <td colspan="2">
+            Foveated encoding. NVENC applies a per-CTB QP delta map so that a circular fovea is encoded at a lower
+            QP (sharper) and the periphery at a higher QP (softer), with a smooth falloff between them. Rate control
+            still targets the requested bitrate, so bits move from the periphery to the fovea.
+            Spatial AQ is turned off while foveation is active.
+            @note{This option only applies when using HEVC with the NVENC [encoder](#encoder).}
+        </td>
+    </tr>
+    <tr>
+        <td>Default</td>
+        <td colspan="2">@code{}
+            disabled
+            @endcode</td>
+    </tr>
+    <tr>
+        <td rowspan="2">Choices</td>
+        <td>disabled</td>
+        <td>Uniform quality across the frame.</td>
+    </tr>
+    <tr>
+        <td>fixed</td>
+        <td>Fovea at the point set by [nvenc_foveation_center_x](#nvenc_foveation_center_x) and
+            [nvenc_foveation_center_y](#nvenc_foveation_center_y).</td>
+    </tr>
+    <tr>
+        <td>Example</td>
+        <td colspan="2">@code{}
+            nvenc_foveation = fixed
+            @endcode</td>
+    </tr>
+</table>
+
+### nvenc_foveation_center_x
+
+<table>
+    <tr>
+        <td>Description</td>
+        <td colspan="2">
+            Horizontal position of the fovea centre as a fraction of the frame width. 0 is the left edge and 1 is
+            the right edge.
+            @note{This option only applies when using HEVC with the NVENC [encoder](#encoder) and
+            [nvenc_foveation](#nvenc_foveation) is not `disabled`.}
+        </td>
+    </tr>
+    <tr>
+        <td>Default</td>
+        <td colspan="2">@code{}
+            0.5
+            @endcode</td>
+    </tr>
+    <tr>
+        <td>Range</td>
+        <td colspan="2">0.0-1.0</td>
+    </tr>
+    <tr>
+        <td>Example</td>
+        <td colspan="2">@code{}
+            nvenc_foveation_center_x = 0.5
+            @endcode</td>
+    </tr>
+</table>
+
+### nvenc_foveation_center_y
+
+<table>
+    <tr>
+        <td>Description</td>
+        <td colspan="2">
+            Vertical position of the fovea centre as a fraction of the frame height. 0 is the top edge and 1 is
+            the bottom edge.
+            @note{This option only applies when using HEVC with the NVENC [encoder](#encoder) and
+            [nvenc_foveation](#nvenc_foveation) is not `disabled`.}
+        </td>
+    </tr>
+    <tr>
+        <td>Default</td>
+        <td colspan="2">@code{}
+            0.5
+            @endcode</td>
+    </tr>
+    <tr>
+        <td>Range</td>
+        <td colspan="2">0.0-1.0</td>
+    </tr>
+    <tr>
+        <td>Example</td>
+        <td colspan="2">@code{}
+            nvenc_foveation_center_y = 0.5
+            @endcode</td>
+    </tr>
+</table>
+
+### nvenc_foveation_radius
+
+<table>
+    <tr>
+        <td>Description</td>
+        <td colspan="2">
+            Radius of the full-quality fovea as a fraction of the frame height.
+            @note{This option only applies when using HEVC with the NVENC [encoder](#encoder) and
+            [nvenc_foveation](#nvenc_foveation) is not `disabled`.}
+        </td>
+    </tr>
+    <tr>
+        <td>Default</td>
+        <td colspan="2">@code{}
+            0.15
+            @endcode</td>
+    </tr>
+    <tr>
+        <td>Range</td>
+        <td colspan="2">0.0-2.0</td>
+    </tr>
+    <tr>
+        <td>Example</td>
+        <td colspan="2">@code{}
+            nvenc_foveation_radius = 0.25
+            @endcode</td>
+    </tr>
+</table>
+
+### nvenc_foveation_falloff
+
+<table>
+    <tr>
+        <td>Description</td>
+        <td colspan="2">
+            Width of the smooth transition band outside the fovea as a fraction of the frame height. 0 gives a
+            hard edge.
+            @note{This option only applies when using HEVC with the NVENC [encoder](#encoder) and
+            [nvenc_foveation](#nvenc_foveation) is not `disabled`.}
+        </td>
+    </tr>
+    <tr>
+        <td>Default</td>
+        <td colspan="2">@code{}
+            0.2
+            @endcode</td>
+    </tr>
+    <tr>
+        <td>Range</td>
+        <td colspan="2">0.0-2.0</td>
+    </tr>
+    <tr>
+        <td>Example</td>
+        <td colspan="2">@code{}
+            nvenc_foveation_falloff = 0.2
+            @endcode</td>
+    </tr>
+</table>
+
+### nvenc_foveation_strength
+
+<table>
+    <tr>
+        <td>Description</td>
+        <td colspan="2">
+            QP difference between the fovea and the far periphery. The fovea gets a delta of -strength/2 and the
+            periphery the rest, so higher values make the fovea sharper and the periphery softer.
+            @note{This option only applies when using HEVC with the NVENC [encoder](#encoder) and
+            [nvenc_foveation](#nvenc_foveation) is not `disabled`.}
+        </td>
+    </tr>
+    <tr>
+        <td>Default</td>
+        <td colspan="2">@code{}
+            10
+            @endcode</td>
+    </tr>
+    <tr>
+        <td>Range</td>
+        <td colspan="2">0-51</td>
+    </tr>
+    <tr>
+        <td>Example</td>
+        <td colspan="2">@code{}
+            nvenc_foveation_strength = 10
+            @endcode</td>
+    </tr>
+</table>
+
 ### nvenc_h264_cavlc
 
 <table>

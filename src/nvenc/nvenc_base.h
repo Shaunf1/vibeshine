@@ -209,6 +209,9 @@ namespace nvenc {
 
     bool hdr_metadata_valid = false;
     SS_HDR_METADATA hdr_metadata {};
+
+    // Per-CTB QP deltas passed with every frame when foveation is enabled, empty otherwise.
+    std::vector<std::int8_t> foveation_qp_map;
   };
 
 }  // namespace nvenc

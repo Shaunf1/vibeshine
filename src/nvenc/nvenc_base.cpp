@@ -709,6 +709,22 @@ namespace nvenc {
         }
     }
 
+    foveation_qp_map.clear();
+    if (config.foveation.mode != foveation::mode_e::disabled) {
+      if (client_config.videoFormat == 1) {
+        // The map holds one value per CTB, so pin the CTB size instead of letting the driver pick it
+        enc_config.encodeCodecConfig.hevcConfig.maxCUSize = NV_ENC_HEVC_CUSIZE_32x32;
+        enc_config.rcParams.qpMapMode = NV_ENC_QP_MAP_DELTA;
+        if (enc_config.rcParams.enableAQ) {
+          BOOST_LOG(warning) << "NvEnc: spatial AQ is disabled because foveation supplies its own QP map";
+          enc_config.rcParams.enableAQ = 0;
+        }
+        foveation_qp_map = foveation::build_qp_delta_map(config.foveation, encoder_params.width, encoder_params.height, foveation::nvenc_hevc_block_size);
+      } else {
+        BOOST_LOG(info) << "NvEnc: foveation is only supported for HEVC, encoding " << codec_name_from_video_format(client_config.videoFormat) << " without it";
+      }
+    }
+
     std::string split_frame_status = "split-frame=n/a";
     if (client_config.videoFormat == 1 || client_config.videoFormat == 2) {
       if (!api::supports_implicit_split_frame(selected_api_version)) {
@@ -788,6 +804,10 @@ namespace nvenc {
         }
 
         BOOST_LOG(info) << "NvEnc: initialized with driver defaults (preset config was unavailable)";
+        if (!foveation_qp_map.empty()) {
+          BOOST_LOG(warning) << "NvEnc: foveation is disabled because the driver defaults have no QP map mode";
+          foveation_qp_map.clear();
+        }
       } else if (!have_preset_config && init_status == NV_ENC_ERR_INVALID_PARAM && hdr_metadata_requires_explicit_config) {
         BOOST_LOG(error) << "NvEnc: NvEncInitializeEncoder() failed: " << init_error
                          << " (driver-default retry disabled because it would drop HDR10 metadata)";
@@ -866,6 +886,9 @@ namespace nvenc {
       if (config.insert_filler_data) {
         extra += " filler-data";
       }
+      if (!foveation_qp_map.empty()) {
+        extra += std::format(" foveation={}({:.2f},{:.2f} r={:.2f} falloff={:.2f} strength={})", foveation::mode_to_string(config.foveation.mode), config.foveation.center_x, config.foveation.center_y, config.foveation.radius, config.foveation.falloff, config.foveation.strength);
+      }
       if (encoder_engine_count > 0) {
         extra += std::format(" engines={}", encoder_engine_count);
       }
@@ -919,6 +942,7 @@ namespace nvenc {
 
     encoder_state = {};
     encoder_params = {};
+    foveation_qp_map.clear();
     hdr_metadata_valid = false;
     hdr_metadata = {};
     selected_api_version = 0;
@@ -982,6 +1006,10 @@ namespace nvenc {
     pic_params.bufferFmt = mapped_input_buffer.mappedBufferFmt;
     pic_params.outputBitstream = output_bitstream;
     pic_params.completionEvent = async_event_handle;
+    if (!foveation_qp_map.empty()) {
+      pic_params.qpDeltaMap = foveation_qp_map.data();
+      pic_params.qpDeltaMapSize = static_cast<uint32_t>(foveation_qp_map.size());
+    }
 
 #if NVENCAPI_MAJOR_VERSION >= 13
     CONTENT_LIGHT_LEVEL content_light_level {};

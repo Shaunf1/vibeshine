@@ -1,3 +1,6 @@
+scripts:
+  setup: |
+    git submodule update --init --recursive
 tracker:
   kind: github-issues
 pipeline:

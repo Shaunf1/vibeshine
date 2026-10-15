@@ -1,0 +1,4 @@
+tracker:
+  kind: github-issues
+pipeline:
+  landing: pr-merge

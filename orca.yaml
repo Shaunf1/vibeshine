@@ -1,0 +1,8 @@
+tracker:
+  kind: github-issues
+pipeline:
+  landing: pr-merge
+scripts:
+  setup: |
+    git submodule update --init --recursive
+    pip install -e .
